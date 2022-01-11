@@ -80,7 +80,7 @@ bool deleteKey(string key){
     }
     return false;
 }
-//linear probing
+//linear probing (cong index them 1 cho den khi vi tri do trong)
 struct Node{
     string key;
     int marker;
@@ -184,4 +184,39 @@ bool deleteKeyQua(string key){
 }
 
 // double hashing(bam kep)
-// index_first
+// index = (index + i * index_second) % table_size
+// tim i nho nhat tu 1-> table_size cho den khi index trong
+bool insertKeyDouble(string key){
+    int index = Hash(key) % TABLE_SIZE;
+    int index_second = Hash(key) + TABLE_SIZE;  // hash khac dong tren
+    if (current_size >= TABLE_SIZE) return false;
+    for(int i = 1; i < TABLE_SIZE;i++)
+    {
+        if (hTable[index].marker == 0){
+            hTable[index].key = key;
+            hTable[index].marker = 1;
+            current_size++;
+            return true;
+        }
+        index = (index + i * index_second) % TABLE_SIZE;
+    }
+    return false;
+}
+
+int searchkey(string key){
+    int index = Hash(key) % TABLE_SIZE;
+    int index_second = Hash(key) % TABLE_SIZE;
+    int count = 0;
+    if (current_size == 0) return -1;
+    int i = 1;
+    while (hTable[index].marker != 0 && count <= TABLE_SIZE){
+        if (hTable[index].key == key){
+            if (hTable[index].marker == 1) return index;
+            return -1; // found, but deleted
+        }
+        index = (index + i * index_second) % TABLE_SIZE;
+        count++;
+        i++;
+    }
+    return -1;
+}
